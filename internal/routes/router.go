@@ -1,11 +1,13 @@
 package routes
 
 import (
+	"github.com/HarvinRaj/goldshop/configs"
 	"github.com/HarvinRaj/goldshop/internal/users"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
-func NewRoutes() *gin.Engine {
+func NewRoutes(config *configs.Config) error {
 
 	userRepo := users.NewUserRepository()
 	userService := users.NewUserService(userRepo)
@@ -17,5 +19,11 @@ func NewRoutes() *gin.Engine {
 
 	router := gin.Default()
 	users.RegisterRoutes(router, handlers.UserHandler)
-	return router
+
+	if err := router.Run(config.Port); err != nil {
+		log.Fatalf("Failed to run server, %v", err)
+		return err
+	}
+
+	return nil
 }
