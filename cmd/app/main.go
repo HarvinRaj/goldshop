@@ -1,28 +1,32 @@
 package main
 
 import (
-	"github.com/HarvinRaj/goldshop/internal/routes"
-	"github.com/joho/godotenv"
+	"github.com/HarvinRaj/goldshop/configs"
+	"github.com/HarvinRaj/goldshop/internal/db"
 	_ "github.com/joho/godotenv/autoload"
 	"log"
-	"os"
 )
 
+var config *configs.Config
+
 func init() {
-	err := godotenv.Load("../../configs/.env")
+
+	var err error
+
+	config, err = configs.LoadConfig("env.json")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatalf("Failed to load config, %v", err)
 	}
 }
 
 func main() {
 
-	port := os.Getenv("PORT")
+	//if err := routes.NewRoutes(config); err != nil {
+	//	log.Fatal(err)
+	//}
 
-	router := routes.NewRoutes()
-
-	if err := router.Run(port); err != nil {
-		log.Fatalf("Failed to run server, %v", err)
+	if err := db.NewDBConnection(config); err != nil {
+		log.Fatal(err)
 	}
 
 }
