@@ -1,0 +1,3 @@
+CREATE DATABASE `goldshop`;
+
+DROP DATABASE IF EXISTS `goldshop`;
