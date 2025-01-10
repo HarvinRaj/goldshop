@@ -7,11 +7,11 @@ on:
     branches: [ "master" ]
 
 jobs:
-  setup-go:
+  Go-Setup:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Go
@@ -30,3 +30,13 @@ jobs:
       - name: Install dependencies
         run: |
           go mod tidy
+
+  Go-Linter:
+    needs: Go-Setup
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.60
