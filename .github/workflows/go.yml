@@ -1,0 +1,49 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
+
+    - name: Go-Linty
+      uses: ArangoGutierrez/GoLinty-Action@go-1.13rc1-alpine
+
+    - name: Go Formatter
+      uses: sladyn98/auto-go-format@v0.0.1
+
+    - name: Go Coverage
+      uses: gwatts/go-coverage-action@v2.0.0
+      with:
+        token: ${{ github.token }}
+        #report-url: #optional
+        report-filename: go-coverage.html
+        cover-mode: count
+        test-pkgs: ./...
+        coverage-threshold: 0
+        fail-coverage: only_pull_requests
+        add-comment: true
+        notes-ref: gocoverage
+    
+          
