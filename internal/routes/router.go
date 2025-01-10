@@ -25,5 +25,6 @@ func NewRoutes(config *configs.Config) error {
 		return err
 	}
 
+	log.Printf("Server has started")
 	return nil
 }
