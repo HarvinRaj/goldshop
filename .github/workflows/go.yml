@@ -14,7 +14,7 @@ jobs:
   Go-Lint:
     runs-on: ubuntu-latest
     steps:
-    - name: "https://github.com/HarvinRaj/goldshop.git"
+    - name: Checking out Repository
     - uses: actions/checkout@v4
 
     - name: Run Go Linter
