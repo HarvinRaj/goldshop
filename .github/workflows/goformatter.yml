@@ -1,0 +1,33 @@
+name: GoFormatter
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  Go-Linter:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Ensure the code is checked out
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'  # Specify your Go version here
+
+      - name: Install dependencies
+        run: |
+          go mod tidy  # Ensure go.mod and go.sum are up to date
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.60
+
+      - name: List files in the repository
+        run: |
+          ls -R  # List files recursively to check if Go files are found
