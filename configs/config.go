@@ -7,6 +7,7 @@ import (
 )
 
 type Config struct {
+	OSType               string `json:"OSTYPE"`
 	Port                 string `json:"PORT"`
 	DBName               string `json:"DBNAME"`
 	DBUser               string `json:"DBUSER"`
@@ -18,6 +19,7 @@ type Config struct {
 	Net                  string `json:"NET"`
 	AllowNativePasswords bool   `json:"ALLOWNATIVEPASSWORDS"`
 	ParseTime            bool   `json:"PARSETIME"`
+	MigrateFiles         string `json:"MIGRATEFILES"`
 }
 
 func LoadConfig(filename string) (*Config, error) {
