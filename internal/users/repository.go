@@ -11,6 +11,6 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{}
 }
 
-func (u UserRepository) Save(user Users) error {
+func (u UserRepository) Save(Users) error {
 	return nil
 }

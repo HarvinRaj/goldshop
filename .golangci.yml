@@ -1,0 +1,20 @@
+linters:
+  disable-all: true
+  enable:
+    - gofmt
+    - revive
+    - staticcheck
+    - gocyclo
+    - errcheck
+    - govet
+    - ineffassign
+    - unused
+    - gosec
+  fast: true
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      text: "error return value not checked for test files"
+      linters:
+        - errcheck
