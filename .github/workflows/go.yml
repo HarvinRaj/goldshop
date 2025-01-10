@@ -22,9 +22,10 @@ jobs:
     - name: Run Go Linter
       uses: golangci/golangci-lint-action@v4
       with:
-        version: v1.54.2 # Specify the desired version
+        version: v1.54.2
         args: > 
-          run ./... # Arguments passed to golangci-lint
+          run ./...
+
   Go-Format:
     runs-on: ubuntu-latest
     steps:
