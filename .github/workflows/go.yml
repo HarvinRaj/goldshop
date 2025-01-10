@@ -1,7 +1,7 @@
 # This workflow will build a golang project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
-name: Go
+name: Go Formatting
 
 on:
   push:
@@ -11,18 +11,30 @@ on:
 
 jobs:
 
-  lint_format_coverage:
+  Go-Lint:
     runs-on: ubuntu-latest
-    
     steps:
+    - name: "https://github.com/HarvinRaj/goldshop.git"
     - uses: actions/checkout@v4
 
-    - name: Go-Linty
+    - name: Run Go Linter
       uses: ArangoGutierrez/GoLinty-Action@go-1.13rc1-alpine
+
+  Go-Format:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "https://github.com/HarvinRaj/goldshop.git"
+    - uses: actions/checkout@v4
 
     - name: Go Formatter
       uses: sladyn98/auto-go-format@v0.0.1
 
+  Go-Coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "https://github.com/HarvinRaj/goldshop.git"
+    - uses: actions/checkout@v4
+    
     - name: Go Coverage
       uses: gwatts/go-coverage-action@v2.0.0
       with:
