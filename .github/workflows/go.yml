@@ -14,6 +14,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4  # Checkout code from the repository
 
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.4'
+
     - name: Run Go Linter
       uses: ArangoGutierrez/GoLinty-Action@go-1.13rc1-alpine  # Run Go Linter
 
@@ -23,6 +28,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4  # Checkout code from the repository
 
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.4'
+
     - name: Run Go Formatter
       uses: sladyn98/auto-go-format@v0.0.1  # Automatically format Go code
 
@@ -31,6 +41,11 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4  # Checkout code from the repository
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.4'
 
     - name: Run Go Coverage
       uses: gwatts/go-coverage-action@v2.0.0  # Run Go Coverage
