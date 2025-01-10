@@ -1,4 +1,4 @@
-name: Go Formatting
+name: Go Workflow
 
 on:
   push:
@@ -7,21 +7,31 @@ on:
     branches: [ "master" ]
 
 jobs:
-
-  Go-Lint:
+  Go-Setup:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4  # Checkout code from the repository
+      uses: actions/checkout@v4
 
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.23.4'
+        go-version: 1.23.4
 
-    - name: Run Go Linter
+    - name: Install dependencies
+      run: go mod tidy
+
+    outputs:
+      go-path: ${{ steps.checkout.outputs.go-path }} # Optional if you want to output paths or versions
+
+  Go-Lint:
+    runs-on: ubuntu-latest
+    needs: Go-Setup
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Run golangci-lint
       uses: golangci/golangci-lint-action@v4
       with:
         version: v1.54.2
-        args: > 
-          run ./...
