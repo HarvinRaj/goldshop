@@ -14,6 +14,6 @@ func NewUserService(repo Repository) *UserService {
 	}
 }
 
-func (u UserService) CreateUser(users *Users) (*Users, error) {
+func (u UserService) CreateUser(*Users) (*Users, error) {
 	return &Users{}, nil
 }
