@@ -11,21 +11,11 @@ on:
 
 jobs:
 
-  build:
+  lint_format_coverage:
     runs-on: ubuntu-latest
+    
     steps:
     - uses: actions/checkout@v4
-
-#    - name: Set up Go
-#      uses: actions/setup-go@v4
-#      with:
-#        go-version: '1.20'
-
-#    - name: Build
-#      run: go build -v ./...
-
-#    - name: Test
-#      run: go test -v ./...
 
     - name: Go-Linty
       uses: ArangoGutierrez/GoLinty-Action@go-1.13rc1-alpine
@@ -37,12 +27,11 @@ jobs:
       uses: gwatts/go-coverage-action@v2.0.0
       with:
         token: ${{ github.token }}
-        #report-url: #optional
         report-filename: go-coverage.html
         cover-mode: count
         test-pkgs: ./...
-        coverage-threshold: 0
-        fail-coverage: only_pull_requests
+        coverage-threshold: 80
+        fail-coverage: always
         add-comment: true
         notes-ref: gocoverage
     
