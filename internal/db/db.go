@@ -40,7 +40,7 @@ func NewDBConnection(config *configs.Config) error {
 		return err
 	}
 
-	log.Printf("Connected to DB")
+	log.Printf("Connected to MySQL Database")
 	return nil
 }
 
@@ -48,7 +48,7 @@ func runMigration(config *configs.Config, db *sql.DB) error {
 
 	driver, err := mSQL.WithInstance(db, &mSQL.Config{})
 	if err != nil {
-		log.Fatalf("Failed to make migrate instance, %v", err)
+		log.Fatalf("Failed to make new migration instance, %v", err)
 		return err
 	}
 
@@ -70,9 +70,9 @@ func runMigration(config *configs.Config, db *sql.DB) error {
 
 	err = m.Up()
 	if err != nil && err != migrate.ErrNoChange {
-		log.Fatalf("Failed to apply migrations, %s", err)
+		log.Fatalf("Failed to make migrations changes, %s", err)
 	}
 
-	log.Printf("Migration succesful")
+	log.Printf("Migration successful, %s", m.Log)
 	return nil
 }
