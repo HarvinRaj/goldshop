@@ -25,7 +25,7 @@ func init() {
 		}
 	}
 
-	currentDate := time.Now().Format("2006-01-02")
+	currentDate := time.Now().Format("20060102")
 	logFileName := fmt.Sprintf("%s_app.log", currentDate)
 
 	logFilePath := filepath.Join(logDir, logFileName)
