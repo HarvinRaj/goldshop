@@ -1,10 +1,12 @@
 package logger
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 var (
@@ -23,13 +25,15 @@ func init() {
 		}
 	}
 
-	logFilePath := filepath.Join(logDir, "app.log")
+	currentDate := time.Now().Format("2006-01-02")
+	logFileName := fmt.Sprintf("%s_app.log", currentDate)
+
+	logFilePath := filepath.Join(logDir, logFileName)
 
 	logFile, err2 := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err2 != nil {
 		log.Fatalf("Failed to open log file: %v", err2)
 	}
-	defer logFile.Close()
 
 	multiWriter := io.MultiWriter(os.Stdout, logFile)
 
