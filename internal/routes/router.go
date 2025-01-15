@@ -3,8 +3,8 @@ package routes
 import (
 	"github.com/HarvinRaj/goldshop/configs"
 	"github.com/HarvinRaj/goldshop/internal/users"
+	"github.com/HarvinRaj/goldshop/logger"
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
 func NewRoutes(config *configs.Config) error {
@@ -20,11 +20,12 @@ func NewRoutes(config *configs.Config) error {
 	router := gin.Default()
 	users.RegisterRoutes(router, handlers.UserHandler)
 
+	logger.InfoLog.Println("Preparing to start server")
+
 	if err := router.Run(config.Port); err != nil {
-		log.Fatalf("Failed to run server, %v", err)
+		logger.ErrorLog.Printf("Failed to start router, %s", err)
 		return err
 	}
 
-	log.Printf("Server has started")
 	return nil
 }

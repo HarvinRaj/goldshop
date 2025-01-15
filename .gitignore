@@ -1,0 +1,7 @@
+#directory
+/logs/
+
+#others
+*.log
+*.tmp
+
