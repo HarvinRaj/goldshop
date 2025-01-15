@@ -2,7 +2,7 @@ package configs
 
 import (
 	"encoding/json"
-	"log"
+	"github.com/HarvinRaj/goldshop/logger"
 	"os"
 )
 
@@ -25,14 +25,14 @@ type Config struct {
 func LoadConfig(filename string) (*Config, error) {
 	file, err := os.ReadFile(filename)
 	if err != nil {
-		log.Fatalf("Failed to read config file, %v", err)
+		logger.ErrorLog.Printf("Failed to read config file, %s", err)
 		return nil, err
 	}
 
 	var config Config
 	err = json.Unmarshal(file, &config)
 	if err != nil {
-		log.Fatal(err)
+		logger.ErrorLog.Printf("Failed to unmarshal JSON config, %s", err)
 		return nil, err
 	}
 
