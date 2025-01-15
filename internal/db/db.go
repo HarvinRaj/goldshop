@@ -3,11 +3,11 @@ package db
 import (
 	"database/sql"
 	"github.com/HarvinRaj/goldshop/configs"
+	"github.com/HarvinRaj/goldshop/logger"
 	"github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	mSQL "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file" //importing migrate/file
-	"log"
 	"strings"
 )
 
@@ -25,22 +25,23 @@ func NewDBConnection(config *configs.Config) error {
 
 	db, err := sql.Open(config.DriverName, dbConfig.FormatDSN())
 	if err != nil {
-		log.Fatalf("Failed to Open DB connection, %v", err)
+		logger.ErrorLog.Printf("Failed to Open DB connection, %v", err)
 		return err
 	}
 
 	if err = runMigration(config, db); err != nil {
-		log.Fatalf("Failed to run migration,%v", err)
+		logger.ErrorLog.Printf("Failed to run migration,%v", err)
 		return err
 	}
+
+	logger.InfoLog.Println("Connected to MySQL Database")
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatalf("Failed to connect to DB, %v", err)
+		logger.ErrorLog.Printf("Failed to connect to DB, %v", err)
 		return err
 	}
 
-	log.Printf("Connected to MySQL Database")
 	return nil
 }
 
@@ -48,7 +49,7 @@ func runMigration(config *configs.Config, db *sql.DB) error {
 
 	driver, err := mSQL.WithInstance(db, &mSQL.Config{})
 	if err != nil {
-		log.Fatalf("Failed to make new migration instance, %v", err)
+		logger.ErrorLog.Printf("Failed to make new migration instance, %v", err)
 		return err
 	}
 
@@ -60,19 +61,19 @@ func runMigration(config *configs.Config, db *sql.DB) error {
 		migrationPath = "file://" + migrationPath
 	}
 
-	log.Printf("Migration file path : %s", migrationPath)
+	logger.InfoLog.Println("Migration file path - ", migrationPath)
 
-	m, err := migrate.NewWithDatabaseInstance(migrationPath, config.DBName, driver)
-	if err != nil {
-		log.Fatalf("Failed to initialize new migration instance, %s", err)
+	m, err2 := migrate.NewWithDatabaseInstance(migrationPath, config.DBName, driver)
+	if err2 != nil {
+		logger.ErrorLog.Printf("Failed to initialize new migration instance, %s", err)
 		return err
 	}
 
 	err = m.Up()
 	if err != nil && err != migrate.ErrNoChange {
-		log.Fatalf("Failed to make migrations changes, %s", err)
+		logger.ErrorLog.Printf("Failed to make migrations changes, %s", err)
 	}
 
-	log.Printf("Migration successful, %s", m.Log)
+	logger.InfoLog.Println("Migration successful")
 	return nil
 }
