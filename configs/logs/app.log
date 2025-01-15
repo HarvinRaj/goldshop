@@ -1,0 +1,2 @@
+2025/01/16 07:04:51 - [ERROR]: Failed to read config file, open non_existent_file.json: The system cannot find the file specified.
+2025/01/16 07:07:04 [Config]Failed to read config file, open non_existent_file.json: The system cannot find the file specified.
