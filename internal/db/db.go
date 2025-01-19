@@ -27,7 +27,7 @@ func NewDBConnection(ctx context.Context, config *configs.Config) error {
 func newMySQL(ctx context.Context, config *configs.Config) error {
 
 	dbConfig := configMySQL(config)
-	db, err := newDriver(ctx, config.DriverName, dbConfig)
+	db, err := newDriver(config.DriverName, dbConfig)
 	if err != nil {
 		logger.ErrorLog.Println(err)
 		return err
@@ -51,7 +51,7 @@ func newMySQL(ctx context.Context, config *configs.Config) error {
 }
 
 // For MySQL Connection, connect to database, new driver
-func newDriver(ctx context.Context, driverName string, dbConfig *mysql.Config) (db *sql.DB, err error) {
+func newDriver(driverName string, dbConfig *mysql.Config) (db *sql.DB, err error) {
 
 	db, err = sql.Open(driverName, dbConfig.FormatDSN())
 	if err != nil {
