@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"github.com/HarvinRaj/goldshop/configs"
 	"github.com/HarvinRaj/goldshop/internal/db"
 	"github.com/HarvinRaj/goldshop/internal/routes"
 	_ "github.com/joho/godotenv/autoload"
 	"log"
+	"time"
 )
 
 var config *configs.Config
@@ -22,7 +24,10 @@ func init() {
 
 func main() {
 
-	if err := db.NewDBConnection(config); err != nil {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := db.NewDBConnection(ctx, config); err != nil {
 		log.Fatal(err)
 	}
 
