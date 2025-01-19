@@ -4,13 +4,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(router *gin.Engine, h *UserHandler) {
+// RegisterRoutes ...
+func RegisterRoutes(router *gin.Engine) {
+
+	repo := NewUserRepository()
+	service := NewUserService(repo)
+	handler := NewUserHandler(service)
 
 	v1 := router.Group("/api/v1")
 	{
 		userGroup := v1.Group("/users")
 		{
-			userGroup.POST("/register", h.CreateUser)
+			userGroup.POST("/register", handler.CreateUser)
 		}
 
 	}
