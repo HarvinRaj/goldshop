@@ -6,9 +6,9 @@ import (
 )
 
 type Repository interface {
-	Save(user *models.Users) error
-	GetUserByEmail(user *models.Users) error
-	IsEmailExist(email string) (bool, error)
+	Save(*models.Users) error
+	GetUserByEmail(*models.Users) (*models.Users, error)
+	IsEmailExist(string) (bool, error)
 	GetAllUsersList() ([]*models.Users, error)
 }
 
@@ -22,11 +22,11 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	}
 }
 
-func (u *UserRepository) Save(user *models.Users) error {
+func (u *UserRepository) Save(req *models.Users) error {
 
 	query := "INSERT INTO users (name, email, password) VALUES (?, ?, ?)"
 
-	_, err := u.db.Exec(query, user.Name, user.Email, user.Password)
+	_, err := u.db.Exec(query, req.Name, req.Email, req.Password)
 	if err != nil {
 		return err
 	}
@@ -34,15 +34,28 @@ func (u *UserRepository) Save(user *models.Users) error {
 	return nil
 }
 
-func (u *UserRepository) GetUserByEmail(*models.Users) error {
-	return nil
+func (u *UserRepository) GetUserByEmail(req *models.Users) (*models.Users, error) {
+
+	var user *models.Users
+
+	query := "SELECT id, name, email, password FROM users WHERE email = ?"
+	err := u.db.QueryRow(query, req.Email).Scan(&user.ID, &user.Name, &user.Email, &user.Password)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (u *UserRepository) IsEmailExist(email string) (bool, error) {
 
 	var exist bool
-	query := "SELECT EXISTS(SELECT 1 FROM users WHERE email = ?)"
 
+	query := "SELECT EXISTS(SELECT 1 FROM users WHERE email = ?)"
 	err := u.db.QueryRow(query, email).Scan(&exist)
 	if err == sql.ErrNoRows {
 		return false, nil
