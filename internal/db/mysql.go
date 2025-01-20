@@ -94,7 +94,7 @@ func runMigrationUP(config *configs.Config, db *sql.DB) error {
 	err = m.Up()
 	if err != nil {
 		if err != migrate.ErrNoChange {
-			logger.ErrorLog.Error.Println("No migration changes, %v", err)
+			logger.ErrorLog.Error.Printf("No migration changes, %v", err)
 		}
 		logger.ErrorLog.Error.Printf("Failed to make migrations changes, %v", err)
 		return err
