@@ -27,11 +27,12 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := db.NewDBConnection(ctx, config); err != nil {
+	dbConnection, err := db.NewDBConnection(ctx, config)
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := routes.NewRoutes(config); err != nil {
+	if err = routes.NewRoutes(config, dbConnection); err != nil {
 		log.Fatal(err)
 	}
 }
