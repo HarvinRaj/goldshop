@@ -10,7 +10,10 @@ import (
 )
 
 var (
-	ErrorLog *log.Logger
+	ErrorLog struct {
+		Error *log.Logger
+		Query *log.Logger
+	}
 
 	InfoLog struct {
 		Info      *log.Logger
@@ -42,7 +45,8 @@ func init() {
 
 	multiWriter := io.MultiWriter(os.Stdout, logFile)
 
-	ErrorLog = log.New(multiWriter, "- [ERROR]: ", log.LstdFlags|log.Lmsgprefix)
+	ErrorLog.Error = log.New(multiWriter, "- [ERROR]: ", log.LstdFlags|log.Lmsgprefix)
+	ErrorLog.Query = log.New(multiWriter, "- [ERROR][QUERY]: ", log.LstdFlags|log.Lmsgprefix)
 	InfoLog.Info = log.New(multiWriter, "- [INFO]: ", log.LstdFlags|log.Lmsgprefix)
 	InfoLog.Connected = log.New(multiWriter, "- [CONNECTED]: ", log.LstdFlags|log.Lmsgprefix)
 	InfoLog.Success = log.New(multiWriter, "- [SUCCESS]: ", log.LstdFlags|log.Lmsgprefix)

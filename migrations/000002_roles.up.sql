@@ -1,4 +1,6 @@
 CREATE TABLE roles (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
-    role_name VARCHAR(50) UNIQUE NOT NULL  -- role names like 'admin', 'user', 'moderator'
+    role_name VARCHAR(50) UNIQUE NOT NULL,  -- role names like 'admin', 'user', 'moderator'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
