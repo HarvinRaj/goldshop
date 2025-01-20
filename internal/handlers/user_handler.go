@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/HarvinRaj/goldshop/internal/dto"
 	"github.com/HarvinRaj/goldshop/internal/services"
+	"github.com/HarvinRaj/goldshop/internal/util"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"net/http"
@@ -33,21 +34,16 @@ func (u *UserHandler) RegisterUser(c *gin.Context) {
 	}
 
 	//Validate the struct
-	if err := validate.Struct(&req); err != nil {
-		errors := make(map[string]string)
-		for _, err2 := range err.(validator.ValidationErrors) {
-			errors[err2.Field()] = err2.Tag() // Field name and validation tag
-		}
-
-		c.IndentedJSON(http.StatusBadRequest, gin.H{
-			"Validate Error": errors,
+	errors, err := util.ValidateDTO(&req)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{
+			"validate errors": errors,
 		})
-		return
 	}
 
 	user := dto.UserRegisterToUserModel(req)
 
-	if err := u.service.CreateUser(user); err != nil {
+	if err = u.service.CreateUser(user); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
 			"error": err,
 		})
@@ -64,7 +60,7 @@ func (u *UserHandler) GetUsersList(c *gin.Context) {
 	users, err := u.service.GetAllUsers()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
+			"error": err,
 		})
 	}
 
@@ -83,4 +79,26 @@ func (u *UserHandler) Login(c *gin.Context) {
 		})
 		return
 	}
+
+	errors, err := util.ValidateDTO(&req)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{
+			"validate error": errors,
+		})
+	}
+
+	user := dto.UserLoginToUserModel(req)
+
+	token, err := u.service.LoginAuthUser(user)
+	if err != nil {
+		c.IndentedJSON(http.StatusUnauthorized, gin.H{
+			"Authorization": err,
+		})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"token": token,
+	})
+
 }
