@@ -33,7 +33,7 @@ func (u *UserRepository) Save(user *models.Users) error {
 	return nil
 }
 
-func (u *UserRepository) GetUserByEmail(user *models.Users) error {
+func (u *UserRepository) GetUserByEmail(*models.Users) error {
 	return nil
 }
 
