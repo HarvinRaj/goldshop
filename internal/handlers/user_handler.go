@@ -26,7 +26,7 @@ func (u *UserHandler) RegisterUser(c *gin.Context) {
 
 	//Bind JSON to user struct
 	if err := c.BindJSON(&req); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{
 			"error": "Cannot bind JSON into struct",
 		})
 		return
@@ -39,8 +39,8 @@ func (u *UserHandler) RegisterUser(c *gin.Context) {
 			errors[err2.Field()] = err2.Tag() // Field name and validation tag
 		}
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"validate error": errors,
+		c.IndentedJSON(http.StatusBadRequest, gin.H{
+			"Validate Error": errors,
 		})
 		return
 	}
@@ -48,13 +48,27 @@ func (u *UserHandler) RegisterUser(c *gin.Context) {
 	user := dto.ToUserModel(req)
 
 	if err := u.service.CreateUser(user); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{
+			"error": err,
 		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	c.IndentedJSON(http.StatusCreated, gin.H{
 		"message": "User registered successfully",
+	})
+}
+
+func (u *UserHandler) GetUsersList(c *gin.Context) {
+
+	users, err := u.service.GetAllUsers()
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"users": users,
 	})
 }

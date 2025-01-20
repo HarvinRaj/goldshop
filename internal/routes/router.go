@@ -26,6 +26,7 @@ func NewRoutes(config *configs.Config, db *db.DB) error {
 
 // Register all the routes here
 func registerNewRoutes(router *gin.Engine, db *db.DB) {
+
 	router.Use(middleware.DatabaseMiddleWare(db))
 	//User Routes
 	RegisterUserRoutes(router, db)
