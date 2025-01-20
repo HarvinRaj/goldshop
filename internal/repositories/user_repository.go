@@ -9,6 +9,7 @@ type Repository interface {
 	Save(user *models.Users) error
 	GetUserByEmail(user *models.Users) error
 	IsEmailExist(email string) (bool, error)
+	GetAllUsersList() ([]*models.Users, error)
 }
 
 type UserRepository struct {
@@ -52,4 +53,31 @@ func (u *UserRepository) IsEmailExist(email string) (bool, error) {
 	}
 
 	return exist, nil
+}
+
+func (u *UserRepository) GetAllUsersList() ([]*models.Users, error) {
+
+	query := "SELECT id, name, email FROM users"
+	rows, err := u.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var userList []*models.Users
+
+	for rows.Next() {
+		var user models.Users
+		if err = rows.Scan(&user.ID, &user.Name, &user.Email); err != nil {
+			return nil, err
+		}
+
+		userList = append(userList, &user)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return userList, nil
 }

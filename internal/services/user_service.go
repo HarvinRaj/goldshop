@@ -10,6 +10,7 @@ import (
 
 type Service interface {
 	CreateUser(user *models.Users) error
+	GetAllUsers() ([]*models.Users, error)
 }
 
 type UserService struct {
@@ -26,7 +27,7 @@ func (u *UserService) CreateUser(user *models.Users) error {
 
 	emailExist, err := u.repo.IsEmailExist(user.Email)
 	if err != nil {
-		logger.ErrorLog.Query.Printf("IsEmailExist error, %v", err)
+		logger.ErrorLog.Query.Printf("IsEmailExist error, email found: %v", err)
 		return err
 	}
 
@@ -44,4 +45,8 @@ func (u *UserService) CreateUser(user *models.Users) error {
 	user.Password = string(hashPassword)
 
 	return u.repo.Save(user)
+}
+
+func (u *UserService) GetAllUsers() ([]*models.Users, error) {
+	return u.repo.GetAllUsersList()
 }
