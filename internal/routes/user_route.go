@@ -21,6 +21,7 @@ func RegisterUserRoutes(router *gin.Engine, db *db.DB) {
 		{
 			userGroup.POST("/register", handler.RegisterUser)
 			userGroup.GET("/list", handler.GetUsersList)
+			userGroup.POST("/login", handler.Login)
 		}
 
 	}
