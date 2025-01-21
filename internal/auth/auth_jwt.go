@@ -48,7 +48,7 @@ func (j *JWTManager) GenerateToken(user *models.Users) (string, error) {
 
 func (j *JWTManager) ValidateToken(tokenString string) (*Claims, error) {
 
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(*jwt.Token) (interface{}, error) {
 		return []byte(j.SecretKey), nil
 	})
 
