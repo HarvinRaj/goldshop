@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/HarvinRaj/goldshop/errors"
+	"github.com/HarvinRaj/goldshop/internal/auth"
 	"github.com/HarvinRaj/goldshop/internal/models"
 	"github.com/HarvinRaj/goldshop/internal/repositories"
 	"github.com/HarvinRaj/goldshop/logger"
@@ -15,18 +16,20 @@ type Service interface {
 }
 
 type UserService struct {
-	repo repositories.Repository
+	repo       repositories.Repository
+	jwtManager *auth.JWTManager
 }
 
-func NewUserService(repo repositories.Repository) *UserService {
+func NewUserService(repo repositories.Repository, jwtManager *auth.JWTManager) *UserService {
 	return &UserService{
-		repo: repo,
+		repo:       repo,
+		jwtManager: jwtManager,
 	}
 }
 
-func (u *UserService) CreateUser(req *models.Users) error {
+func (s *UserService) CreateUser(req *models.Users) error {
 
-	emailExist, err := u.repo.IsEmailExist(req.Email)
+	emailExist, err := s.repo.IsEmailExist(req.Email)
 	if err != nil {
 		logger.ErrorLog.Query.Printf("IsEmailExist error, email found: %v", err)
 		return err
@@ -45,26 +48,32 @@ func (u *UserService) CreateUser(req *models.Users) error {
 
 	req.Password = string(hashPassword)
 
-	return u.repo.Save(req)
+	return s.repo.Save(req)
 }
 
-func (u *UserService) GetAllUsers() ([]*models.Users, error) {
-	return u.repo.GetAllUsersList()
+func (s *UserService) GetAllUsers() ([]*models.Users, error) {
+	return s.repo.GetAllUsersList()
 }
 
-func (u *UserService) LoginAuthUser(req *models.Users) (string, error) {
+func (s *UserService) LoginAuthUser(req *models.Users) (string, error) {
 
-	loginUser, err := u.repo.GetUserByEmail(req)
+	user, err := s.repo.GetUserByEmail(req)
 	if err != nil {
 		logger.ErrorLog.Query.Printf("GetUserByEmail Error: %v", err)
 		return "", err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(loginUser.Password), []byte(req.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err != nil {
 		logger.ErrorLog.Error.Printf("Password does not match, %v", err)
 		return "", err
 	}
 
-	return "", nil
+	token, err := s.jwtManager.GenerateToken(user)
+	if err != nil {
+		logger.ErrorLog.Auth.Printf("Failed to generate token, %v", err)
+		return "", err
+	}
+
+	return token, nil
 }
