@@ -8,6 +8,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	mSQL "github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"strings"
 )
 
@@ -87,17 +88,19 @@ func runMigrationUP(config *configs.Config, db *sql.DB) error {
 
 	m, err2 := migrate.NewWithDatabaseInstance(migrationPath, config.DBName, driver)
 	if err2 != nil {
-		logger.ErrorLog.Error.Printf("Failed to initialize new migration instance, %v", err)
-		return err
+		logger.ErrorLog.Error.Printf("Failed to initialize new migration instance, %v", err2)
+		return err2
 	}
 
 	err = m.Up()
 	if err != nil {
-		if err != migrate.ErrNoChange {
-			logger.ErrorLog.Error.Printf("No migration changes, %v", err)
+		if err == migrate.ErrNoChange {
+			logger.InfoLog.Info.Printf("No migration changes, %v", err)
+			return nil
+		} else {
+			logger.ErrorLog.Error.Printf("Failed to make migrations changes, %v", err)
+			return err
 		}
-		logger.ErrorLog.Error.Printf("Failed to make migrations changes, %v", err)
-		return err
 	}
 
 	logger.InfoLog.Success.Println("Migration successful")
