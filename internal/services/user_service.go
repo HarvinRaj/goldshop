@@ -9,8 +9,9 @@ import (
 )
 
 type Service interface {
-	CreateUser(user *models.Users) error
+	CreateUser(*models.Users) error
 	GetAllUsers() ([]*models.Users, error)
+	LoginAuthUser(*models.Users) (string, error)
 }
 
 type UserService struct {
@@ -23,9 +24,9 @@ func NewUserService(repo repositories.Repository) *UserService {
 	}
 }
 
-func (u *UserService) CreateUser(user *models.Users) error {
+func (u *UserService) CreateUser(req *models.Users) error {
 
-	emailExist, err := u.repo.IsEmailExist(user.Email)
+	emailExist, err := u.repo.IsEmailExist(req.Email)
 	if err != nil {
 		logger.ErrorLog.Query.Printf("IsEmailExist error, email found: %v", err)
 		return err
@@ -36,17 +37,34 @@ func (u *UserService) CreateUser(user *models.Users) error {
 		return errors.New(3000)
 	}
 
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		logger.ErrorLog.Error.Printf("Failed to hash password: %v", err)
 		return err
 	}
 
-	user.Password = string(hashPassword)
+	req.Password = string(hashPassword)
 
-	return u.repo.Save(user)
+	return u.repo.Save(req)
 }
 
 func (u *UserService) GetAllUsers() ([]*models.Users, error) {
 	return u.repo.GetAllUsersList()
+}
+
+func (u *UserService) LoginAuthUser(req *models.Users) (string, error) {
+
+	loginUser, err := u.repo.GetUserByEmail(req)
+	if err != nil {
+		logger.ErrorLog.Query.Printf("GetUserByEmail Error: %v", err)
+		return "", err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(loginUser.Password), []byte(req.Password))
+	if err != nil {
+		logger.ErrorLog.Error.Printf("Password does not match, %v", err)
+		return "", err
+	}
+
+	return "", nil
 }
