@@ -36,7 +36,7 @@ func (u *UserRepository) Save(req *models.Users) error {
 
 func (u *UserRepository) GetUserByEmail(req *models.Users) (*models.Users, error) {
 
-	var user *models.Users
+	var user models.Users
 
 	query := "SELECT id, name, email, password FROM users WHERE email = ?"
 	err := u.db.QueryRow(query, req.Email).Scan(&user.ID, &user.Name, &user.Email, &user.Password)
@@ -48,7 +48,7 @@ func (u *UserRepository) GetUserByEmail(req *models.Users) (*models.Users, error
 		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
 }
 
 func (u *UserRepository) IsEmailExist(email string) (bool, error) {

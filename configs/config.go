@@ -20,6 +20,7 @@ type Config struct {
 	AllowNativePasswords bool   `json:"ALLOWNATIVEPASSWORDS"`
 	ParseTime            bool   `json:"PARSETIME"`
 	MigrateFiles         string `json:"MIGRATEFILES"`
+	SecretKey            string `json:"SECRETKEY"`
 }
 
 func LoadConfig(filename string) (*Config, error) {

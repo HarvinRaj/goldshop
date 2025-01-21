@@ -8,12 +8,18 @@ func ValidateDTO(dto interface{}) (any, error) {
 
 	var validate = validator.New()
 
-	if err := validate.Struct(&dto); err != nil {
-		errors := make(map[string]string)
-		for _, err2 := range err.(validator.ValidationErrors) {
-			errors[err2.Field()] = err2.Tag() // Field name and validation tag
+	err := validate.Struct(dto)
+	if err != nil {
+
+		if validationErrs, ok := err.(validator.ValidationErrors); ok {
+			errs := make(map[string]string)
+			for _, err2 := range validationErrs {
+				errs[err2.Field()] = err2.Tag() // Field name and validation tag
+			}
+			return errs, err
 		}
-		return errors, err
+
+		return err.Error(), err
 	}
 
 	return nil, nil
