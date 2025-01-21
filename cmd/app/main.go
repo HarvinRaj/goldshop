@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/HarvinRaj/goldshop/configs"
 	"github.com/HarvinRaj/goldshop/internal/db"
+	"github.com/HarvinRaj/goldshop/internal/routes"
 	_ "github.com/joho/godotenv/autoload"
 	"log"
 	"time"
@@ -26,12 +27,12 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := db.NewDBConnection(ctx, config)
+	database, err := db.NewDBConnection(ctx, config)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	/*if err = routes.NewRoutes(config, database); err != nil {
+	if err = routes.NewRoutes(config, database); err != nil {
 		log.Fatal(err)
-	}*/
+	}
 }
