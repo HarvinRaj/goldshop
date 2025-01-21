@@ -5,11 +5,8 @@ import (
 	"github.com/HarvinRaj/goldshop/internal/services"
 	"github.com/HarvinRaj/goldshop/internal/util"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"net/http"
 )
-
-var validate = validator.New()
 
 type UserHandler struct {
 	service services.Service
