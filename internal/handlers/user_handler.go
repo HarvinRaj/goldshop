@@ -18,7 +18,7 @@ func NewUserHandler(service services.Service) *UserHandler {
 	}
 }
 
-func (u *UserHandler) RegisterUser(c *gin.Context) {
+func (h *UserHandler) RegisterUser(c *gin.Context) {
 
 	var req *dto.UserRegisterRequest
 
@@ -26,23 +26,27 @@ func (u *UserHandler) RegisterUser(c *gin.Context) {
 	if err := c.BindJSON(&req); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
 			"error": "Cannot bind JSON into struct",
+			"err":   err,
 		})
 		return
 	}
 
 	//Validate the struct
-	errors, err := util.ValidateDTO(&req)
+	errors, err := util.ValidateDTO(req)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
-			"validate errors": errors,
+			"errors": "validate error",
+			"err":    errors,
 		})
+		return
 	}
 
 	user := dto.UserRegisterToUserModel(req)
 
-	if err = u.service.CreateUser(user); err != nil {
+	if err = h.service.CreateUser(user); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
-			"error": err,
+			"error": "create user error",
+			"err":   err,
 		})
 		return
 	}
@@ -52,13 +56,15 @@ func (u *UserHandler) RegisterUser(c *gin.Context) {
 	})
 }
 
-func (u *UserHandler) GetUsersList(c *gin.Context) {
+func (h *UserHandler) GetUsersList(c *gin.Context) {
 
-	users, err := u.service.GetAllUsers()
+	users, err := h.service.GetAllUsers()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
-			"error": err,
+			"error": "get all user list error",
+			"err":   err,
 		})
+		return
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{
@@ -66,30 +72,34 @@ func (u *UserHandler) GetUsersList(c *gin.Context) {
 	})
 }
 
-func (u *UserHandler) Login(c *gin.Context) {
+func (h *UserHandler) Login(c *gin.Context) {
 
 	var req *dto.UserLoginRequest
 
 	if err := c.BindJSON(&req); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
 			"error": "Cannot bind JSON into struct",
+			"err":   err,
 		})
 		return
 	}
 
-	errors, err := util.ValidateDTO(&req)
+	errors, err := util.ValidateDTO(req)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
-			"validate error": errors,
+			"error": "validate dto error",
+			"err":   errors,
 		})
+		return
 	}
 
 	user := dto.UserLoginToUserModel(req)
 
-	token, err := u.service.LoginAuthUser(user)
+	token, err := h.service.LoginAuthUser(user)
 	if err != nil {
 		c.IndentedJSON(http.StatusUnauthorized, gin.H{
-			"Authorization": err,
+			"error": "login authenthication error",
+			"err":   err,
 		})
 		return
 	}
