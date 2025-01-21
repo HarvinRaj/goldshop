@@ -8,7 +8,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	mSQL "github.com/golang-migrate/migrate/v4/database/mysql"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/golang-migrate/migrate/v4/source/file" // imported for side effect
 	"strings"
 )
 
@@ -97,10 +97,9 @@ func runMigrationUP(config *configs.Config, db *sql.DB) error {
 		if err == migrate.ErrNoChange {
 			logger.InfoLog.Info.Printf("No migration changes, %v", err)
 			return nil
-		} else {
-			logger.ErrorLog.Error.Printf("Failed to make migrations changes, %v", err)
-			return err
 		}
+		logger.ErrorLog.Error.Printf("Failed to make migrations changes, %v", err)
+		return err
 	}
 
 	logger.InfoLog.Success.Println("Migration successful")
