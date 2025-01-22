@@ -25,13 +25,13 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 func (u *UserRepository) SaveAll(user *models.Users) (*models.Users, error) {
 
 	query := `INSERT INTO users (
-		username, 
-		email, 
-		password_hash, 
-		first_name, 
-		last_name, 
-		role_id, 
-		is_active, 
+		username,
+		email,
+		password_hash,
+		first_name,
+		last_name,
+		role_id,
+		is_active,
 		created_at
 	) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
@@ -54,7 +54,7 @@ func (u *UserRepository) SaveAll(user *models.Users) (*models.Users, error) {
 		return nil, err
 	}
 
-	userQuery := `SELECT user_id, username, email, first_name, last_name, role_id, is_active, created_at 
+	userQuery := `SELECT user_id, username, email, first_name, last_name, role_id, is_active, created_at
 				  FROM users
 				  WHERE user_id = ?`
 
@@ -82,7 +82,7 @@ func (u *UserRepository) GetUserByEmail(req *models.Users) (*models.Users, error
 
 	var user models.Users
 
-	query := "SELECT user_id, username, password FROM users WHERE email = ?"
+	query := "SELECT user_id, username, password_hash FROM users WHERE email = ?"
 
 	err := u.db.QueryRow(query, req.Email).Scan(&user.UserID, &user.UserName, &user.Password)
 	if err == sql.ErrNoRows {
