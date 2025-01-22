@@ -5,29 +5,33 @@ import (
 )
 
 type UserRegisterRequest struct {
-	Name     string `json:"name" validate:"required"`
-	Email    string `json:"email" validate:"required"`
-	Password string `json:"password" validate:"required"`
+	UserName  string `json:"username" validate:"required"`
+	Email     string `json:"email" validate:"required"`
+	Password  string `json:"password" validate:"required"`
+	FirstName string `json:"first_name" validate:"required"`
+	LastName  string `json:"last_name" validate:"required"`
 }
 
 func UserRegisterToUserModel(dto *UserRegisterRequest) *models.Users {
 
 	return &models.Users{
-		Name:     dto.Name,
-		Email:    dto.Email,
-		Password: dto.Password,
+		UserName:  dto.UserName,
+		Email:     dto.Email,
+		Password:  dto.Password,
+		FirstName: dto.FirstName,
+		LastName:  dto.LastName,
 	}
 }
 
 type UserLoginRequest struct {
-	Email    string `json:"email" validate:"required"`
+	UserName string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
 
 func UserLoginToUserModel(dto *UserLoginRequest) *models.Users {
 
 	return &models.Users{
-		Email:    dto.Email,
+		UserName: dto.UserName,
 		Password: dto.Password,
 	}
 }

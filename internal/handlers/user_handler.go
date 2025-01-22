@@ -25,8 +25,8 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 	//Bind JSON to user struct
 	if err := c.BindJSON(&req); err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
-			"error": "Cannot bind JSON into struct",
-			"err":   err,
+			"user_handler": "c.BindJSON()",
+			"error":        err,
 		})
 		return
 	}
@@ -35,24 +35,26 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 	errors, err := util.ValidateDTO(req)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
-			"errors": "validate error",
-			"err":    errors,
+			"user_handler": "util.ValidateDTO()",
+			"error":        errors,
 		})
 		return
 	}
 
 	user := dto.UserRegisterToUserModel(req)
 
-	if err = h.service.CreateUser(user); err != nil {
+	userDB, err := h.service.CreateUser(user)
+	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{
-			"error": "create user error",
-			"err":   err,
+			"user_handler": "h.service.CreateUser()",
+			"error":        err,
 		})
 		return
 	}
 
 	c.IndentedJSON(http.StatusCreated, gin.H{
-		"message": "User registered successfully",
+		"message":      "User registered successfully",
+		"user-details": userDB,
 	})
 }
 

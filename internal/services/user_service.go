@@ -7,10 +7,11 @@ import (
 	"github.com/HarvinRaj/goldshop/internal/repositories"
 	"github.com/HarvinRaj/goldshop/logger"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 type Service interface {
-	CreateUser(*models.Users) error
+	CreateUser(*models.Users) (*models.Users, error)
 	GetAllUsers() ([]*models.Users, error)
 	LoginAuthUser(*models.Users) (string, error)
 }
@@ -27,49 +28,51 @@ func NewUserService(repo repositories.Repository, jwtManager *auth.JWTManager) *
 	}
 }
 
-func (s *UserService) CreateUser(req *models.Users) error {
+func (s *UserService) CreateUser(user *models.Users) (*models.Users, error) {
 
-	emailExist, err := s.repo.IsEmailExist(req.Email)
+	emailExist, err := s.repo.IsEmailExist(user.Email)
 	if err != nil {
 		logger.ErrorLog.Query.Printf("IsEmailExist error, email found: %v", err)
-		return err
+		return nil, err
 	}
 
 	if emailExist {
 		logger.ErrorLog.Query.Printf("Email exists: %v", emailExist)
-		return errors.New(3000)
+		return nil, errors.New(3000)
 	}
 
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		logger.ErrorLog.Error.Printf("Failed to hash password: %v", err)
-		return err
+		return nil, err
 	}
 
-	req.Password = string(hashPassword)
+	user.Password = string(hashPassword)
 
-	return s.repo.Save(req)
+	user.CreatedAt = time.Now()
+
+	return s.repo.SaveAll(user)
 }
 
 func (s *UserService) GetAllUsers() ([]*models.Users, error) {
 	return s.repo.GetAllUsersList()
 }
 
-func (s *UserService) LoginAuthUser(req *models.Users) (string, error) {
+func (s *UserService) LoginAuthUser(user *models.Users) (string, error) {
 
-	user, err := s.repo.GetUserByEmail(req)
+	userDB, err := s.repo.GetUserByEmail(user)
 	if err != nil {
 		logger.ErrorLog.Query.Printf("GetUserByEmail Error: %v", err)
 		return "", err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(userDB.Password), []byte(user.Password))
 	if err != nil {
 		logger.ErrorLog.Error.Printf("Password does not match, %v", err)
 		return "", err
 	}
 
-	token, err := s.jwtManager.GenerateToken(user)
+	token, err := s.jwtManager.GenerateToken(userDB)
 	if err != nil {
 		logger.ErrorLog.Auth.Printf("Failed to generate token, %v", err)
 		return "", err
