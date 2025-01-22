@@ -144,7 +144,6 @@ func (u *UserRepository) GetAllUsersList() ([]*models.Users, error) {
 	return userList, nil
 }
 
-
 func (u *UserRepository) GetUserByUsername(req *models.Users) (*models.Users, error) {
 
 	var user models.Users
