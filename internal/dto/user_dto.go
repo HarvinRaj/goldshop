@@ -17,7 +17,7 @@ func UserRegisterToUserModel(dto *UserRegisterRequest) *models.Users {
 	return &models.Users{
 		UserName:  dto.UserName,
 		Email:     dto.Email,
-		Password:  dto.Password,
+		PasswordHash:  dto.Password,
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
 	}
@@ -32,6 +32,6 @@ func UserLoginToUserModel(dto *UserLoginRequest) *models.Users {
 
 	return &models.Users{
 		UserName: dto.UserName,
-		Password: dto.Password,
+		PasswordHash: dto.Password,
 	}
 }
