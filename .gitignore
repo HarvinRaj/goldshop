@@ -3,9 +3,12 @@
 /.vscode/
 /.idea/
 
+#file
+.air.toml
+env.json
+
 #others
 *.log
 *.tmp
-*.toml
 Makefile
 
