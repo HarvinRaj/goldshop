@@ -1,13 +1,14 @@
 package services
 
 import (
+	"time"
+
 	"github.com/HarvinRaj/goldshop/errors"
 	"github.com/HarvinRaj/goldshop/internal/auth"
 	"github.com/HarvinRaj/goldshop/internal/models"
 	"github.com/HarvinRaj/goldshop/internal/repositories"
 	"github.com/HarvinRaj/goldshop/logger"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 type Service interface {
@@ -41,13 +42,13 @@ func (s *UserService) CreateUser(user *models.Users) (*models.Users, error) {
 		return nil, errors.New(3000)
 	}
 
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcrypt.DefaultCost)
 	if err != nil {
 		logger.ErrorLog.Error.Printf("Failed to hash password: %v", err)
 		return nil, err
 	}
 
-	user.Password = string(hashPassword)
+	user.PasswordHash = string(hashPassword)
 
 	user.CreatedAt = time.Now()
 
@@ -60,13 +61,13 @@ func (s *UserService) GetAllUsers() ([]*models.Users, error) {
 
 func (s *UserService) LoginAuthUser(user *models.Users) (string, error) {
 
-	userDB, err := s.repo.GetUserByEmail(user)
+	userDB, err := s.repo.GetUserByUsername(user)
 	if err != nil {
-		logger.ErrorLog.Query.Printf("GetUserByEmail Error: %v", err)
+		logger.ErrorLog.Query.Printf("GetUserByUsername Error: %v", err)
 		return "", err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(userDB.Password), []byte(user.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(userDB.PasswordHash), []byte(user.PasswordHash))
 	if err != nil {
 		logger.ErrorLog.Error.Printf("Password does not match, %v", err)
 		return "", err

@@ -15,11 +15,11 @@ type UserRegisterRequest struct {
 func UserRegisterToUserModel(dto *UserRegisterRequest) *models.Users {
 
 	return &models.Users{
-		UserName:  dto.UserName,
-		Email:     dto.Email,
-		Password:  dto.Password,
-		FirstName: dto.FirstName,
-		LastName:  dto.LastName,
+		UserName:     dto.UserName,
+		Email:        dto.Email,
+		PasswordHash: dto.Password,
+		FirstName:    dto.FirstName,
+		LastName:     dto.LastName,
 	}
 }
 
@@ -31,7 +31,7 @@ type UserLoginRequest struct {
 func UserLoginToUserModel(dto *UserLoginRequest) *models.Users {
 
 	return &models.Users{
-		UserName: dto.UserName,
-		Password: dto.Password,
+		UserName:     dto.UserName,
+		PasswordHash: dto.Password,
 	}
 }

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+
 	"github.com/HarvinRaj/goldshop/internal/models"
 )
 
@@ -10,6 +11,7 @@ type Repository interface {
 	GetUserByEmail(*models.Users) (*models.Users, error)
 	IsEmailExist(string) (bool, error)
 	GetAllUsersList() ([]*models.Users, error)
+	GetUserByUsername(*models.Users) (*models.Users, error)
 }
 
 type UserRepository struct {
@@ -38,7 +40,7 @@ func (u *UserRepository) SaveAll(user *models.Users) (*models.Users, error) {
 	result, err := u.db.Exec(query,
 		user.UserName,
 		user.Email,
-		user.Password,
+		user.PasswordHash,
 		user.FirstName,
 		user.LastName,
 		user.RoleID,
@@ -84,7 +86,7 @@ func (u *UserRepository) GetUserByEmail(req *models.Users) (*models.Users, error
 
 	query := "SELECT user_id, username, password_hash FROM users WHERE email = ?"
 
-	err := u.db.QueryRow(query, req.Email).Scan(&user.UserID, &user.UserName, &user.Password)
+	err := u.db.QueryRow(query, req.Email).Scan(&user.UserID, &user.UserName, &user.PasswordHash)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -140,4 +142,22 @@ func (u *UserRepository) GetAllUsersList() ([]*models.Users, error) {
 	}
 
 	return userList, nil
+}
+
+func (u *UserRepository) GetUserByUsername(req *models.Users) (*models.Users, error) {
+
+	var user models.Users
+
+	query := "SELECT user_id, username, password_hash FROM users WHERE username = ?"
+
+	err := u.db.QueryRow(query, req.UserName).Scan(&user.UserID, &user.UserName, &user.PasswordHash)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
