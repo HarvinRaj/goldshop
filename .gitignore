@@ -1,7 +1,11 @@
 #directory
 /logs/
+/.vscode/
+/.idea/
 
 #others
 *.log
 *.tmp
+*.toml
+Makefile
 
