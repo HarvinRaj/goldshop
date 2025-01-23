@@ -30,12 +30,12 @@ func LoadConfig(filename string) (*Config, error) {
 		return nil, err
 	}
 
-	var config Config
+	var config *Config
 	err = json.Unmarshal(file, &config)
 	if err != nil {
 		logger.ErrorLog.Error.Printf("Failed to unmarshal JSON config, %s", err)
 		return nil, err
 	}
 
-	return &config, nil
+	return config, nil
 }
